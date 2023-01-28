@@ -11,7 +11,7 @@ const int pwmChannel = 0;
 byte NTC_analog;
 double nozzle_temperature;
 
-// variables for PID
+ // variables for PID
 double PID_Setpoint = 750;
 double PID_Input, PID_Output;
 
@@ -62,12 +62,8 @@ void setup() {
 void loop() {
 
   NTC_analog = getNtcAnalog();
-
-  delay(1000);
-
   adjustPID();
   printPID();
-
-  delay(500);
+  delay(100);
 
 }

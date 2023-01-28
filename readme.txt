@@ -18,4 +18,4 @@ The pulling of the filament will be done with a stepper motor. I chose a Nema N1
 motor is powered by 12 V. The motor shaft spins a spool-like holder for the newly made filament.
 
 A standard computer power supply was used. The 12 V rails are to power the heating element, motor and motor driver while the 5 V rails are used to power the Arduino.
-N.B.: the PC power supply has to be partially meddle with to make operable under such conditions. Follow online tutorials and proceed at your own risk.
+N.B.: the PC power supply has to be partially meddled with to make operable under such conditions. Follow online tutorials and proceed at your own risk.
