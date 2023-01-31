@@ -1,0 +1,8 @@
+degC	analog_read
+22	83
+
+NTC	analog_read
+184k	186
+25k	580
+4760	871
+1280	979
