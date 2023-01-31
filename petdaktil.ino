@@ -11,9 +11,9 @@ double NTC_analog;
 double nozzle_temperature;
 
 // variables for PID
-double Setpoint = 700;
+double Setpoint = 300;
 double Input, Output;
-double Kp = 5, Ki = 0, Kd = 0;
+double Kp = 0.1, Ki = 0, Kd = 0;
 double closeKp = 0.01, closeKi = 0, closeKd = 1;
 
 PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
@@ -29,7 +29,7 @@ double getNtcAnalog() {
 }
 
 double calculateNozzleTemperature() {
-  return NTC_analog * 0.13 - 43.95;
+  return NTC_analog * 0.2 + 1.89;
 }
 
 void adjustPID() {
@@ -80,7 +80,7 @@ void loop() {
 
   // NTC_analog = getNtcAnalog();
 
-  // if ( abs(Setpoint - NTC_analog) < 20) {
+  // if ( abs(Setpoint - NTC_analog) < 50) {
   //   myPID.SetTunings(closeKp, closeKi, closeKd);
   //   digitalWrite(LED_BUILTIN, HIGH);
   // }
