@@ -13,7 +13,7 @@ double nozzle_temperature;
 // variables for PID
 double Setpoint = 991;
 double Input, Output;
-double Kp = 50, Ki = 0, Kd = 0;
+double Kp = 50, Ki = 0, Kd = 100;
 
 PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
 
