@@ -12,10 +12,10 @@ double nozzle_temperature;
 
 // variables for PID
 double Setpoint = 991;
-double pidSecondThreshold = 50;
+//double pidSecondThreshold = 50;
 double Input, Output;
 double Kp = 50, Ki = 0, Kd = 0;
-double closeKp = 50, closeKi = 0, closeKd = 0;
+//double closeKp = 50, closeKi = 0, closeKd = 0;
 
 PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
 
@@ -30,7 +30,7 @@ double getNtcAnalog() {
 }
 
 double calculateNozzleTemperature() {
-  return NTC_analog * 0.2 + 1.89;
+  return NTC_analog * 0.21 + 14.3;
 }
 
 void adjustPID() {
@@ -64,6 +64,7 @@ void setup() {
   pinMode(Ntc_pin, INPUT);
   pinMode(stp_pin, OUTPUT);
   pinMode(slp_pin, OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
 
   myPID.SetMode(AUTOMATIC);
 
@@ -81,16 +82,15 @@ void loop() {
 
    NTC_analog = getNtcAnalog();
 
-   if ( abs(Setpoint - NTC_analog) < pidSecondThreshold) {
-     myPID.SetTunings(closeKp, closeKi, closeKd);
+   if ( abs(Setpoint - NTC_analog) < 10) {
+//     myPID.SetTunings(closeKp, closeKi, closeKd);
      digitalWrite(LED_BUILTIN, HIGH);
    }
    else {
-     myPID.SetTunings(Kp, Ki, Kd);
+     digitalWrite(LED_BUILTIN, LOW);
    }
 
    adjustPID();
-  
    printPID();
   // Serial.println(calculateNozzleTemperature());
 
