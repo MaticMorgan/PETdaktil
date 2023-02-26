@@ -1,34 +1,35 @@
+#include <AccelStepper.h>
 #include <PID_v2.h>
 
- // constants
-const byte Ntc_pin = A0;
-const byte pwm_pin = 9;
-const byte stp_pin = 3;
-const byte slp_pin = 2;
+# define NTC_pin A0
+# define pot_pin A6
+# define pwm_pin 9
 
  // variables
 double NTC_analog;
 double nozzle_temperature;
+byte spd;
 
 // variables for PID
-double Setpoint = 991;
+double Setpoint = 950;
 double Input, Output;
 double Kp = 50, Ki = 0, Kd = 100;
 
-PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT);
+PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT); // instance of the PID class
 
+AccelStepper stepper(1, 4, 5); // AccelStepper class instance of a stepper of type 1 with pin 4 for stp and pin 5 for dir
 
  // functions
 double getNtcAnalog() {
   for (int i = 0; i < 10; i++) {
-      NTC_analog += analogRead(Ntc_pin);
+      NTC_analog += analogRead(NTC_pin);
   }
   NTC_analog = NTC_analog / 10.0;
   return NTC_analog;
 }
 
 double calculateNozzleTemperature() {
-  return NTC_analog * 0.2 + 1.89;
+  return NTC_analog * 0.21 + 14.3;
 }
 
 void adjustPID() {
@@ -37,53 +38,44 @@ void adjustPID() {
   analogWrite(pwm_pin, Output);
 }
 
-void printPID() {
+void printAll() {
   Serial.println(NTC_analog);
   Serial.println(calculateNozzleTemperature());
   Serial.println(Output);
-}
-
-void makeOneStep() {
-  digitalWrite(stp_pin, HIGH);
-  delayMicroseconds(1000);
-  digitalWrite(stp_pin, LOW);
-  delayMicroseconds(1000);
-}
-
-void stepperSleep() {
-  digitalWrite(slp_pin, LOW);
+  Serial.println(spd);
 }
 
 
 void setup() {
 
-  // setting up all the usual
-  pinMode(pwm_pin, OUTPUT);
-  pinMode(Ntc_pin, INPUT);
-  pinMode(stp_pin, OUTPUT);
-  pinMode(slp_pin, OUTPUT);
-
-  myPID.SetMode(AUTOMATIC);
-
-  pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(9600);
 
-  stepperSleep();
-  delay(5000); // wait for 5 seconds so all other systems come online
+  // setting up all the usual
+  pinMode(pwm_pin, OUTPUT);
+  pinMode(NTC_pin, INPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
+  
+  myPID.SetMode(AUTOMATIC);
+
+  stepper.setMaxSpeed(1023);
+  stepper.setSpeed(analogRead(pot_pin));
+  
+  delay(3000); // wait for a bit
 
 }
 
 
 void loop() {
 
-
    NTC_analog = getNtcAnalog();
-
+   while (abs(NTC_analog - Setpoint) > 20) {
+    adjustPID();
+    
+   }
    adjustPID();
-  
-   printPID();
-  // Serial.println(calculateNozzleTemperature());
-
-   delay(100);
+   spd = analogRead(A6);
+   stepper.setSpeed(-spd);
+   stepper.runSpeed();
+   printAll();
 
 }
