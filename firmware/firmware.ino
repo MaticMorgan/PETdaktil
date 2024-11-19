@@ -17,8 +17,6 @@ PID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, DIRECT); // PID instanca
 
 AccelStepper stepper1(AccelStepper::FULL2WIRE, STP_PIN, DIR_PIN);
 
-#define SENSOR_PIN A5
-
 
 // FUNKCIJE
 
@@ -38,16 +36,12 @@ void adjustPID() {
   analogWrite(PWM_PIN, Output);
 }
 
-double calculateNozzleTemperature() {
-  return NTC_analog * 0.21 + 14.3;
-}
 
 void setup() {
   
   pinMode(PWM_PIN, OUTPUT);
   pinMode(NTC_PIN, INPUT);
   pinMode(STP_PIN, OUTPUT);
-  pinMode(SENSOR_PIN, INPUT_PULLUP);
   pinMode(LED_BUILTIN, OUTPUT);
 
   myPID.SetMode(AUTOMATIC);
@@ -55,8 +49,6 @@ void setup() {
 
   stepper1.setMaxSpeed(1000); 
   stepper1.setSpeed(500);
-
-  Serial.begin(9600);
 
   // sekundni utrip vgrajene LED, signal, da vse deluje po planu
   digitalWrite(LED_BUILTIN, HIGH);
@@ -71,7 +63,6 @@ void setup() {
 void loop() {
 
   adjustPID();
-  Serial.println(calculateNozzleTemperature());
   
   if (abs(Setpoint - analogRead(NTC_PIN)) < 20) {
     digitalWrite(LED_BUILTIN, HIGH);
@@ -80,6 +71,5 @@ void loop() {
   else {
     digitalWrite(LED_BUILTIN, LOW);
   }
-
   
 }
